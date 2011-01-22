@@ -1,22 +1,28 @@
 var Controller = Class.create({
 	properties: {},
 	methods: {
-		onLoad: function(){
+		respond: function(data){
 			
 		},
-		onUnload: function(){
+		destruct: function(){
 			
 		},
-		doOnLoad: function(){
-			this.onLoad();
+		check: function(data){
+			if(data.location === this._location){
+				this._active = true;
+				this.respond(data.params||{});
+			}else{
+				if(this._active === true){
+					this._active = false;
+					this.destruct();
+				}
+			}
 		},
-		doOnUnload: function(){
-			this.onUnload();
-			this._app._context.innerHTML = '';
-		},
-		initialize: function(app){
+		initialize: function(app, location){
 			this._app = app;
+			this._location = location;
 			this._view = this._app._view;
+			this._app.router.subscribe('router:change', this.check.bind(this));
 			this.prepare();
 		},
 		prepare: function(){
