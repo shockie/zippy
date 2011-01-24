@@ -1,5 +1,8 @@
 <html>
 	<head>
+		<script type="text/javascript">
+			var Zippy = function Zippy(){};
+		</script>
 		<script type="text/javascript" src="../lib/xregexp.js"></script>
 		<script type="text/javascript" src="../lib/jx.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
@@ -12,41 +15,36 @@
 		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded",function(){
-				var HelloController = Class.create(Controller,{
-					methods:{
-						prepare: function(){
-							console.log('locked on position, /hello');
-						},
-						respond: function(){
-							this._app.getView('header').setTemplate('static/templates/header.mustache');
-							this._app.getView('header').setData({
-								title: 'Hello World'
-							});
-							this._app.getView('header').display();
-							console.log('w00t got called, /hello');
-						},
-						destruct: function(){
-							console.log('sorry, have to go!, /hello');
-						}
+				var HelloController = new Zippy.Controller({
+					onLock: function(){
+						console.log('locked on position, /hello');
+					},
+					respond: function(){
+						// this._app.getView('header').setTemplate('static/templates/header.mustache');
+						// this._app.getView('header').setData({
+						// 	title: 'Hello World'
+						// });
+						// this._app.getView('header').display();
+						console.log('w00t got called, /hello');
+					},
+					destruct: function(){
+						console.log('sorry, have to go!, /hello');
 					}
 				});
-				var TestController = Class.create(Controller,{
-					methods:{
-						prepare: function(){
-							console.log('locked on position, /test');
-						},
-						respond: function(){
-							console.log('w00t got called, /test');
-						},
-						destruct: function(){
-							console.log('sorry, have to go!, /test');
-						}
+				var TestController = new Zippy.Controller({
+					onLock: function(){
+						console.log('locked on position, /test');
+					},
+					respond: function(){
+						console.log('w00t got called, /test');
+					},
+					destruct: function(){
+						console.log('sorry, have to go!, /test');
 					}
 				});
-				app = new App(null, {
+				app = new Zippy.App(null, {
 					hello:'world'
 				});
-				
 				app.listen({
 					'/hello': HelloController,
 					'/test' : TestController
