@@ -1,11 +1,19 @@
 (function(){
 	var _ajax = this.Ajax;
-	var _template = this.Template;	
+	var _template = this.Template;
 	function View(context, template){
+		if(typeof context === 'string'){
+			var element = document.querySelector(context);
+			if(element){
+				context = element;
+			}
+		}
 		this._context = context;
 		this._data = {};
-		this._templateFile = template;
-		this.fetchTemplate(this._templateFile, this.onTemplateFetched.bind(this));
+		if(template){
+			this._templateFile = template;
+			this.fetchTemplate(this._templateFile);
+		}
 	}
 	
 	View.prototype.setData = function(data){
@@ -17,20 +25,37 @@
 	}
 	
 	View.prototype.onTemplateFetched = function(template){
+		this._fetching = false;
 		this._template = template;
+		this.fire('template:loaded');
 	}
 	
-	View.prototype.fetchTemplate = function(url,cb){
-		_ajax.load(url,cb);
+	View.prototype.fetchTemplate = function(url){
+		if(!this._fetching){
+			this.setTemplate(url);
+			this._fetching = true;
+			_ajax.load(url,this.onTemplateFetched.bind(this));
+		}
 	}
 	
-	View.prototype.display = function(){
+	View.prototype.display = function(data){
 		//TODO: add template checking
-		this.render();
+		if(typeof this._context === 'string'){
+			this._context = document.querySelector(this._context);
+		}
+		if(!this._template){
+			this.on('template:loaded', this.display.bind(this));
+			this.fetchTemplate(this._templateFile);
+			return;
+		}else{
+			this.stopListening('template:loaded', this.display.bind(this));
+		}
+		this.render(data||this._data);
+		this.fire('view:displayed');
 	}
 	
-	View.prototype.render = function(){
-		this._context.innerHTML = _template.render(this._template, this._data);
+	View.prototype.render = function(data){
+		this._context.innerHTML = _template.render(this._template, data);
 	}
 	this.View = View;
 	Class.mixin(this.View,this.Event);

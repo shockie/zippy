@@ -11,7 +11,7 @@
 			return;
 		}
 		this._location = location;
-		//this.trigger('url:change', {url:this._location});
+		this.fire('router:change', {url:this._location});
 		var match;
 		for(var name in this._routing){
 			//found a match!
