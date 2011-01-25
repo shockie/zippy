@@ -16,8 +16,8 @@
 		<script type="text/javascript" src="../lang/function.js"></script>
 		<script type="text/javascript" src="../mvc/event.js"></script>
 		<script type="text/javascript" src="../mvc/model.js"></script>
-		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/view.js"></script>
+		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/router.js"></script>
 		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
@@ -50,7 +50,15 @@
 					}
 				});
 				app = new Zippy.App(null, {
-					hello:'world'
+					'layout': 'static/templates/base.mustache',
+					'defaultViews': {
+						'header': {
+							'view': new Zippy.View('header','static/templates/header.mustache'),
+							'data': {
+								'title': 'Zippy'
+							}
+						}
+					}
 				});
 				app.listen(new Zippy.Router({
 					'/hello': HelloController,
