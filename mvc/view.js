@@ -1,44 +1,37 @@
-var View = Class.create({
-	methods: {
-		initialize: function(context, template){
-			this.set('context', context, {silent: true});
-			this.set('data', {}, {silent: true});
-			if(template){
-				this.fetchTemplate(template);
-			}
-		},
-		setData: function(data){
-			this.set('data', data);
-		},
-		setTemplate: function(url){
-			this.fetchTemplate(url);
-		},
-		fetchTemplate: function(url){
-			View.Ajax.load(url,function(template){
-				this.set('template', template, {silent: true});
-				this.trigger('view:loaded', {loaded: true});
-			}.bind(this));
-		},
-		display: function(data){
-			if(!this.get('template')){
-				this.subscribe('view:loaded', this.display.bind(this));
-				return;
-			}
-			if(data){
-				this.unsubscribe('view:loaded', this.display.bind(this));
-			}
-			this.render();
-			this.trigger('view:displayed');
-		},
-		render: function(){
-			this.get('context').innerHTML = View.Template.render(this.get('template'), this.get('data'));
-		}
+(function(){
+	var _ajax = this.Ajax;
+	var _template = this.Template;	
+	function View(context, template){
+		this._context = context;
+		this._data = {};
+		this._templateFile = template;
+		this.fetchTemplate(this._templateFile, this.onTemplateFetched.bind(this));
 	}
-});
-// make jx global to the view module;
-View.Ajax = jx;
-View.Template = {
-	render: function(template, data){
-		return Mustache.to_html(template, data);
+	
+	View.prototype.setData = function(data){
+		this._data = data;
 	}
-};
+	
+	View.prototype.setTemplate = function(template){
+		this._templateFile = template;
+	}
+	
+	View.prototype.onTemplateFetched = function(template){
+		this._template = template;
+	}
+	
+	View.prototype.fetchTemplate = function(url,cb){
+		_ajax.load(url,cb);
+	}
+	
+	View.prototype.display = function(){
+		//TODO: add template checking
+		this.render();
+	}
+	
+	View.prototype.render = function(){
+		this._context.innerHTML = _template.render(this._template, this._data);
+	}
+	this.View = View;
+	Class.mixin(this.View,this.Event);
+}).call(Zippy);

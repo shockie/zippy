@@ -11,7 +11,6 @@
 		//this.getView('base').subscribe('view:displayed', this.addDefaultViews.bind(this));
 		//this.getView('base').display();
 	};
-	
 	App.prototype.addDefaultViews = function(){
 		this.addView('header', new View(document.getElementsByTagName('header')[0]));
 		this.addView('main', new View(document.getElementById('main')));
@@ -40,11 +39,9 @@
 		stopInterval(this._interval);
 	};
 	
-	App.prototype.listen = function(routers){
-		this.router = new Zippy.Router(routers);
-		for(var name in routers){
-			routers[name].prepare(this, name);
-		}
+	App.prototype.listen = function(router){
+		this.router = router;
+		this.router.prepare(this);
 		this.start();
 	};
 	
@@ -56,6 +53,7 @@
 		this._view = adapter;
 	};
 	this.App = App;
+	Class.mixin(this.App, this.Event);
 }).call(Zippy);
 
 // var App = Class.create({

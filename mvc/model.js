@@ -12,10 +12,5 @@
 	};
 	
 	this.Model = Model;
+	Class.mixin(this.Model,this.Event);
 }).call(Zippy);
-// 
-// var Model = function(properties){
-// 	return Class.create({
-// 		properties: properties
-// 	});
-// }

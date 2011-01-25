@@ -7,6 +7,12 @@ Class.inherits = function(Child,Parent){
 	Child.prototype.constructor = Child;
 }
 
+Class.mixin = function(Child,Parent){
+	for(var name in Parent.prototype){
+		Child.prototype[name] = Parent.prototype[name];
+	}
+}
+
 Class.create = function(){
 	var parent;
 	var properties;
@@ -66,7 +72,7 @@ Class.create = function(){
 			return;
 		}
 		for(var i=0;i<this._callbacks[event].length;i++){
-			this._callbacks[event][i](data);
+			this._callbacks[event][i](data, true);
 		}
 	}
 	klass.prototype.unsubscribe = function(event,cb){

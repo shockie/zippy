@@ -20,7 +20,6 @@
 	};
 	
 	Controller.prototype.check = function(data){
-		console.log('check', this._location);
 		if(data.location === this._location){
 			this._active = true;
 			this.respond(data.params||{});
@@ -36,7 +35,7 @@
 	Controller.prototype.prepare = function(app,location){
 		this._app = app;
 		this._location = location;
-		//this._app.router.subscribe('router:change', this.check.bind(this));
+		this._app._router.on('router:change',this.check.bind(this));
 	};
 	
 	Controller.prototype.render = function(){
@@ -44,6 +43,7 @@
 		this._app._context.innerHTML = body;
 	};
 	this.Controller = Controller;
+	Class.mixin(this.Controller, this.Event);
 }).call(Zippy);
 // var Controller = Class.create({
 // 	properties: {},

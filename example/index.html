@@ -1,13 +1,20 @@
 <html>
 	<head>
-		<script type="text/javascript">
-			var Zippy = function Zippy(){};
-		</script>
 		<script type="text/javascript" src="../lib/xregexp.js"></script>
 		<script type="text/javascript" src="../lib/jx.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
+		<script type="text/javascript">
+			var Zippy = function Zippy(){};
+			Zippy.Ajax = jx;
+			Zippy.Template = {
+				render: function(template, data){
+					return Mustache.to_html(template, data);
+				}
+			};
+		</script>
 		<script type="text/javascript" src="../lang/class.js"></script>
 		<script type="text/javascript" src="../lang/function.js"></script>
+		<script type="text/javascript" src="../mvc/event.js"></script>
 		<script type="text/javascript" src="../mvc/model.js"></script>
 		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/view.js"></script>
@@ -45,10 +52,10 @@
 				app = new Zippy.App(null, {
 					hello:'world'
 				});
-				app.listen({
+				app.listen(new Zippy.Router({
 					'/hello': HelloController,
 					'/test' : TestController
-				});
+				}));
 			}, false );
 		</script>
 	</head>
