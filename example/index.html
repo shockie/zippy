@@ -1,11 +1,14 @@
 <html>
 	<head>
-		<script type="text/javascript" src="../lib/xregexp.js"></script>
-		<script type="text/javascript" src="../lib/jx.js"></script>
+		<script type="text/javascript" src="../lib/zepto.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
 		<script type="text/javascript">
 			var Zippy = function Zippy(){};
-			Zippy.Ajax = jx;
+			Zippy.Ajax = {
+				get: function(url,cb){
+					$.get(url,cb);
+				}
+			};
 			Zippy.Template = {
 				render: function(template, data){
 					return Mustache.to_html(template, data);
@@ -27,11 +30,7 @@
 						console.log('locked on position, /hello');
 					},
 					respond: function(){
-						// this._app.getView('header').setTemplate('static/templates/header.mustache');
-						// this._app.getView('header').setData({
-						// 	title: 'Hello World'
-						// });
-						// this._app.getView('header').display();
+						this._app.getView('header').display({title: '/hello'});
 						console.log('w00t got called, /hello');
 					},
 					destruct: function(){
@@ -43,23 +42,28 @@
 						console.log('locked on position, /test');
 					},
 					respond: function(){
-						console.log('w00t got called, /test');
+						this._app.getView('header').display({title: '/test'});
 					},
 					destruct: function(){
 						console.log('sorry, have to go!, /test');
 					}
 				});
 				app = new Zippy.App(null, {
-					'layout': 'static/templates/base.mustache',
-					'defaultViews': {
-						'header': {
-							'view': new Zippy.View('header','static/templates/header.mustache'),
-							'data': {
-								'title': 'Zippy'
-							}
-						},
-						'footer': {
-							'view': new Zippy.View('footer','static/templates/footer.mustache')
+					'layout': {
+						'template': 'static/templates/base.mustache',
+						'context': '#main',
+						'views': {
+							'global': [
+								{
+									'view': new Zippy.View('header','static/templates/header.mustache'),
+									'data': {
+										'title': 'Zippy'
+									}
+								},
+								{
+									'view': new Zippy.View('footer','static/templates/footer.mustache')
+								}
+							]
 						}
 					}
 				});

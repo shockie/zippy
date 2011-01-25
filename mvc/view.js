@@ -2,18 +2,13 @@
 	var _ajax = this.Ajax;
 	var _template = this.Template;
 	function View(context, template){
-		if(typeof context === 'string'){
-			var element = document.querySelector(context);
-			if(element){
-				context = element;
-			}
-		}
-		this._context = context;
+		this._context = $(context);
 		this._data = {};
 		if(template){
 			this._templateFile = template;
 			this.fetchTemplate(this._templateFile);
 		}
+		this.fire('view:new', {view: this});
 	}
 	
 	View.prototype.setData = function(data){
@@ -34,15 +29,22 @@
 		if(!this._fetching){
 			this.setTemplate(url);
 			this._fetching = true;
-			_ajax.load(url,this.onTemplateFetched.bind(this));
+			_ajax.get(url,this.onTemplateFetched.bind(this));
 		}
+	}
+	
+	View.prototype.listen = function(){
+		
 	}
 	
 	View.prototype.display = function(data){
 		//TODO: add template checking
-		if(typeof this._context === 'string'){
-			this._context = document.querySelector(this._context);
+		if(this._context.length == 0){
+			this._context = $(this._context.selector);
 		}
+		
+		this.listen();
+		
 		if(!this._template){
 			this.on('template:loaded', this.display.bind(this));
 			this.fetchTemplate(this._templateFile);
@@ -55,7 +57,7 @@
 	}
 	
 	View.prototype.render = function(data){
-		this._context.innerHTML = _template.render(this._template, data);
+		this._context.html(_template.render(this._template, data));
 	}
 	this.View = View;
 	Class.mixin(this.View,this.Event);

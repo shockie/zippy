@@ -2,16 +2,29 @@
 	var self = this;
 	function App(ctx, config){
 		this._context = ctx || document.body;
+		this._controller = [];
 		this._views = {};
 		this._properties = {};
 		config = config || {};
 		for(var name in config){
 			this._properties[name] = config[name];
-		}		
+		}
+		
+		this._main = new self.Controller({
+			respond: function(){
+				
+			},
+			destruct: function(){
+				
+			}
+		});
+		this._main.prepare(this._context, this._properties['layout']['template']);
+
 		this.addView('base',new self.View(this._context, this._properties['layout']));
 		this.getView('base').on('view:displayed', this.addDefaultViews.bind(this));
 		this.getView('base').display();
 	};
+
 	App.prototype.addDefaultViews = function(){
 		for(var name in this._properties['defaultViews']){
 			this._properties['defaultViews'][name]['view'].setData(this._properties['defaultViews'][name]['data']);

@@ -1,10 +1,15 @@
 (function(){
 	function Controller(methods){
+		this._view = [];
 		methods = methods || {};
 		for(var name in methods){
 			this[name] = methods[name];
 		}
 	};
+	
+	Controller.prototype.listen = function(){
+		
+	}
 	
 	Controller.prototype.respond = function(){
 		

@@ -15,7 +15,7 @@
 		var match;
 		for(var name in this._routing){
 			//found a match!
-			var regex = XRegExp(name);
+			var regex = new RegExp(name);
 			if(regex.test(this._location)){
 				this._routing[name].check({
 					location: this._location,
