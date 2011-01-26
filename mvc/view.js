@@ -38,7 +38,7 @@
 		
 	}
 	
-	View.prototype.display = function(data){
+	View.prototype.display = function(data, template){
 		//TODO: add template checking
 		if(this._context.length == 0){
 			this._context = $(this._context.selector);
@@ -46,21 +46,22 @@
 		
 		this.listen();
 		
-		if(this._templateFile && !this._template){
+		if(this._templateFile && !this._template && !template){
 			this.on('template:loaded', this.display.bind(this));
 			this.fetchTemplate(this._templateFile);
 			return;
 		}else{
 			this.stopListening('template:loaded', this.display.bind(this));
 		}
-		if(this._template){
-			this.render(data||this._data);
+		
+		if(this._template||template){
+			this.render(template||this._template,data||this._data);
 		}
 		this.fire('view:displayed');
 	}
 	
-	View.prototype.render = function(data){
-		this._context.html(_template.render(this._template, data));
+	View.prototype.render = function(template,data){
+		this._context.html(_template.render(template, data));
 	}
 	this.View = View;
 	Class.mixin(this.View,this.Event);

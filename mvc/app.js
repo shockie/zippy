@@ -2,75 +2,51 @@
 	var self = this;
 	function App(ctx, config){
 		this._context = ctx || document.body;
-		this._controller = [];
-		this._views = {};
+		this._controllers = [];
 		this._properties = {};
 		config = config || {};
 		for(var name in config){
 			this._properties[name] = config[name];
 		}
-		this.addMainController();
+		this.addWindow();
 	};
 	
-	App.prototype.addMainController = function(){
-		var that= this;
+	App.prototype.addWindow = function(){
 		this._window = new self.Window({
 			context: this._context,
 			views: this._properties.layout.views['global'],
-			template: this._properties.layout.template
-		}.bind(this));
-		
-		
-		// 
-		// this._main = new self.Controller({
-		// 	respond: function(){
-		// 		//add document.body view;
-		// 		var base = new self.View(that._context, that._properties['layout']['template']);
-		// 		this.addView(base);
-		// 		
-		// 		//add other global views when base view is displayed;
-		// 		base.on('view:displayed', function(data){
-		// 			for(var i=0; i< this._app._properties.layout.views['global'].length;i++){
-		// 				this._app._properties.layout.views['global'][i]['view'].setData(this._app._properties.layout.views['global'][i]['data']);
-		// 				this.addView(this._app._properties.layout.views['global'][i]['view']);
-		// 				this.getView(this._app._properties.layout.views['global'][i]['view'].selector, function(view){
-		// 					view.display();
-		// 				});
-		// 			}
-		// 			//add #main view for controllers update;
-		// 			var context = new self.View(this._app._properties.layout.context);
-		// 			this.addView(context);
-		// 			this.getView(this._app._properties.layout.context, function(view){
-		// 				view.display();
-		// 			});
-		// 		}.bind(this));
-		// 		
-		// 		this.getView(base.selector, function(view){
-		// 			view.display();
-		// 		});
-		// 	},
-		// 	destruct: function(){
-		// 		
-		// 	}
-		// });
-		// this._main.prepare(this);
-		// this._main.respond();
+			template: this._properties.layout.template,
+			base: this._properties.layout.context
+		});
+		this._window.display();
 	}
 	
-	App.prototype.start = function(){
-		this._interval = setInterval(function(){
-			this.router.dispatch(window.location);
-		}.bind(this), 100);
-	};
-	
 	App.prototype.stop = function(){
-		stopInterval(this._interval);
+		this.router.stop();
 	};
 	
-	App.prototype.listen = function(router){
-		this.router = router;
-		this.router.prepare(this);
-		this.start();
+	App.prototype.onPrepare = function(data){
+		for(var name in this._routing){
+			this._routing[name].prepare(this, name);
+			this._routing[name].on('view:update', this._window.update.bind(this._window));
+		}
+	};
+	
+	App.prototype.onChangeLocation = function(data){
+		this.fire('controller:destruct', {
+			location: data.old
+		});
+		this.fire('controller:construct', {
+			location: data.url
+		});
+	};
+	
+	App.prototype.listen = function(routing){
+		this._routing = routing;
+		this.router = new self.Router();
+		this.router.on('router:prepare', this.onPrepare.bind(this));
+		this.router.on('router:change', this.onChangeLocation.bind(this));
+		this.router.prepare();
 	};
 	
 	App.prototype.redirect = function(location){

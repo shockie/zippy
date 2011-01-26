@@ -10,26 +10,24 @@
 		}else if(this._location === location){
 			return;
 		}
+		var old = this._location;
 		this._location = location;
-		this.fire('router:change', {url:this._location});
-		var match;
-		for(var name in this._routing){
-			//found a match!
-			var regex = new RegExp(name);
-			if(regex.test(this._location)){
-				this._routing[name].check({
-					location: this._location,
-					params: regex.exec(this._location)
-				});
-				break;
-			}
-		}
+		this.fire('router:change', {
+			url:this._location,
+			old:old
+		});
 	}
 	
-	Router.prototype.prepare = function(app){
-		for(var name in this._routing){
-			this._routing[name].prepare(app, name);
-		}
+	Router.prototype.prepare = function(){
+		this._interval = setInterval(function(){
+			this.dispatch(window.location);
+		}.bind(this), 100);
+		this.fire('router:prepare');
+	}
+	
+	Router.prototype.stop = function(){
+		clearInterval(this._interval);
+		delete this._interval;
 	}
 	
 	Router.prototype.parse = function(location){

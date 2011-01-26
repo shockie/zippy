@@ -5,6 +5,7 @@
 		for(var name in methods){
 			this[name] = methods[name];
 		}
+		
 	};
 	Class.mixin(Controller, this.Event);
 	Controller.prototype.addView = function(view){
@@ -45,24 +46,34 @@
 		
 	};
 	
-	Controller.prototype.check = function(data){
-		if(data.location === this._location){
-			this._active = true;
-			this.respond(data.params||{});
-		}else{
-			if(this._active === true){
-				this._active = false;
-				this.destruct();
-			}
+	Controller.prototype.update = function(template, data){
+		this.fire('view:update', {
+			template: template,
+			data:data
+		});
+	}
+	
+	Controller.prototype.onDestruct = function(data){
+		if(data.location === this._location && this._active){
+			this._active = false;
+			this.destruct();
 		}
-		
-	};
+	}
+	
+	Controller.prototype.onConstruct = function(data){
+		if(data.location === this._location){
+			var regex = new RegExp(this._location);
+			this._active = true;
+			this.respond(regex.exec(data.location)||{});
+		}
+	}
 	
 	Controller.prototype.prepare = function(app,location){
 		this._app = app;
+		this._app.on('controller:destruct', this.onDestruct.bind(this));
+		this._app.on('controller:construct', this.onConstruct.bind(this));
 		if(location){
 			this._location = location;
-			this._app.router.on('router:change',this.check.bind(this));
 		}
 	};
 	
