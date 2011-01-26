@@ -20,6 +20,7 @@
 		<script type="text/javascript" src="../mvc/event.js"></script>
 		<script type="text/javascript" src="../mvc/model.js"></script>
 		<script type="text/javascript" src="../mvc/view.js"></script>
+		<script type="text/javascript" src="../mvc/window.js"></script>
 		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/router.js"></script>
 		<script type="text/javascript" src="../mvc/app.js"></script>
@@ -30,9 +31,7 @@
 						console.log('locked on position, /hello');
 					},
 					respond: function(){
-						this._app._main.getView('header', function(view){
-							view.display({title: '/hello'});
-						});
+						this.update('{{hello}}', {hello: 'world'});
 						console.log('w00t got called, /hello');
 					},
 					destruct: function(){
@@ -44,9 +43,8 @@
 						console.log('locked on position, /test');
 					},
 					respond: function(){
-						this._app._main.getView('header', function(view){
-							view.display({title: '/test'});
-						});
+						this.update('{{hello}}', {hello: 'test'});
+						console.log('w00t got called, /test');
 					},
 					destruct: function(){
 						console.log('sorry, have to go!, /test');
@@ -71,10 +69,10 @@
 						}
 					}
 				});
-				app.listen(new Zippy.Router({
+				app.listen({
 					'/hello': HelloController,
 					'/test' : TestController
-				}));
+				});
 			}, false );
 		</script>
 	</head>
