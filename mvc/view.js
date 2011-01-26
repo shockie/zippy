@@ -2,6 +2,7 @@
 	var _ajax = this.Ajax;
 	var _template = this.Template;
 	function View(context, template){
+		this.selector = context;
 		this._context = $(context);
 		this._data = {};
 		if(template){
@@ -45,14 +46,16 @@
 		
 		this.listen();
 		
-		if(!this._template){
+		if(this._templateFile && !this._template){
 			this.on('template:loaded', this.display.bind(this));
 			this.fetchTemplate(this._templateFile);
 			return;
 		}else{
 			this.stopListening('template:loaded', this.display.bind(this));
 		}
-		this.render(data||this._data);
+		if(this._template){
+			this.render(data||this._data);
+		}
 		this.fire('view:displayed');
 	}
 	

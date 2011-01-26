@@ -30,7 +30,9 @@
 						console.log('locked on position, /hello');
 					},
 					respond: function(){
-						this._app.getView('header').display({title: '/hello'});
+						this._app._main.getView('header', function(view){
+							view.display({title: '/hello'});
+						});
 						console.log('w00t got called, /hello');
 					},
 					destruct: function(){
@@ -42,7 +44,9 @@
 						console.log('locked on position, /test');
 					},
 					respond: function(){
-						this._app.getView('header').display({title: '/test'});
+						this._app._main.getView('header', function(view){
+							view.display({title: '/test'});
+						});
 					},
 					destruct: function(){
 						console.log('sorry, have to go!, /test');

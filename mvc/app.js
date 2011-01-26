@@ -9,44 +9,53 @@
 		for(var name in config){
 			this._properties[name] = config[name];
 		}
+		this.addMainController();
+	};
+	
+	App.prototype.addMainController = function(){
+		var that= this;
+		this._window = new self.Window({
+			context: this._context,
+			views: this._properties.layout.views['global'],
+			template: this._properties.layout.template
+		}.bind(this));
 		
-		this._main = new self.Controller({
-			respond: function(){
-				
-			},
-			destruct: function(){
-				
-			}
-		});
-		this._main.prepare(this._context, this._properties['layout']['template']);
-
-		this.addView('base',new self.View(this._context, this._properties['layout']));
-		this.getView('base').on('view:displayed', this.addDefaultViews.bind(this));
-		this.getView('base').display();
-	};
-
-	App.prototype.addDefaultViews = function(){
-		for(var name in this._properties['defaultViews']){
-			this._properties['defaultViews'][name]['view'].setData(this._properties['defaultViews'][name]['data']);
-			this.addView(name, this._properties['defaultViews'][name]['view']);
-			this.getView(name).display();
-		}
-		// this.addView('header', new self.View('header'));
-		// this.addView('main', new self.View('#main'));
-		// this.addView('footer', new self.View('footer'));
-	};
-	
-	App.prototype.addView = function(name, view){
-		this._views[name] = view;
-	};
-	
-	App.prototype.getView = function(name){
-		return this._views[name];
-	};
-	
-	App.prototype.removeView = function(name){
-		delete this._view[name];
-	};
+		
+		// 
+		// this._main = new self.Controller({
+		// 	respond: function(){
+		// 		//add document.body view;
+		// 		var base = new self.View(that._context, that._properties['layout']['template']);
+		// 		this.addView(base);
+		// 		
+		// 		//add other global views when base view is displayed;
+		// 		base.on('view:displayed', function(data){
+		// 			for(var i=0; i< this._app._properties.layout.views['global'].length;i++){
+		// 				this._app._properties.layout.views['global'][i]['view'].setData(this._app._properties.layout.views['global'][i]['data']);
+		// 				this.addView(this._app._properties.layout.views['global'][i]['view']);
+		// 				this.getView(this._app._properties.layout.views['global'][i]['view'].selector, function(view){
+		// 					view.display();
+		// 				});
+		// 			}
+		// 			//add #main view for controllers update;
+		// 			var context = new self.View(this._app._properties.layout.context);
+		// 			this.addView(context);
+		// 			this.getView(this._app._properties.layout.context, function(view){
+		// 				view.display();
+		// 			});
+		// 		}.bind(this));
+		// 		
+		// 		this.getView(base.selector, function(view){
+		// 			view.display();
+		// 		});
+		// 	},
+		// 	destruct: function(){
+		// 		
+		// 	}
+		// });
+		// this._main.prepare(this);
+		// this._main.respond();
+	}
 	
 	App.prototype.start = function(){
 		this._interval = setInterval(function(){
