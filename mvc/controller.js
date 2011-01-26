@@ -5,8 +5,7 @@
 		for(var name in methods){
 			this[name] = methods[name];
 		}
-		
-	};
+	}
 	Class.mixin(Controller, this.Event);
 	Controller.prototype.addView = function(view){
 		this.on('view:select', function(data){
@@ -36,15 +35,15 @@
 	
 	Controller.prototype.respond = function(){
 		
-	};
+	}
 	
 	Controller.prototype.destruct = function(){
 		
-	};
+	}
 	
 	Controller.prototype.onLoad = function(){
 		
-	};
+	}
 	
 	Controller.prototype.update = function(template, data){
 		this.fire('view:update', {
@@ -89,6 +88,6 @@
 	Controller.prototype.render = function(){
 		var body = this._app._view.render(template,params);
 		this._app._context.innerHTML = body;
-	};
+	}
 	this.Controller = Controller;
 }).call(Zippy);

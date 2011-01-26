@@ -25,68 +25,68 @@
 		<script type="text/javascript" src="../mvc/router.js"></script>
 		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
-			document.addEventListener("DOMContentLoaded",function(){
-				var HelloController = new Zippy.Controller({
-					onLoad: function(){
-					},
-					respond: function(){
-						this.getView('header', function(view){
-							view.display({
-								title: 'Hello World',
-								menu: [
-									{url: '#/test', name: 'test'},
-									{url: '#/hello', name: 'hello'},
-									{url: '/', name: 'home'}
+		$(document).ready(function(){
+			var HelloController = new Zippy.Controller({
+				onLoad: function(){
+				},
+				respond: function(){
+					this.getView('header', function(view){
+						view.display({
+							title: 'Hello World',
+							menu: [
+								{url: '#/test', name: 'test'},
+								{url: '#/hello', name: 'hello'},
+								{url: '/', name: 'home'}
+							]
+						});
+					});
+					this.update('<a href="{{url}}">{{name}}</a>', {
+						url: '#/test',
+						name: 'go to test'
+					});
+				},
+				destruct: function(){
+				}
+			});
+			var TestController = new Zippy.Controller({
+				onLoad: function(){
+				},
+				respond: function(){
+					this.getView('header', function(view){
+						view.display({
+							title: 'Test'
+						});
+					});
+					this.update('hello!');
+				},
+				destruct: function(){
+				}
+			});
+			app = new Zippy.App({
+				'layout': {
+					'template': 'static/templates/base.mustache',
+					'context': '#main',
+					'views': [
+						{
+							'view': new Zippy.View('header','static/templates/header.mustache'),
+							'data': {
+								'title': 'Zippy',
+								'menu': [
+									{'url': '#/hello', 'name': 'hello'}
 								]
-							});
-						});
-						this.update('<a href="{{url}}">{{name}}</a>', {
-							url: '#/test',
-							name: 'go to test'
-						});
-					},
-					destruct: function(){
-					}
-				});
-				var TestController = new Zippy.Controller({
-					onLoad: function(){
-					},
-					respond: function(){
-						this.getView('header', function(view){
-							view.display({
-								title: 'Test'
-							});
-						});
-						this.update('hello!');
-					},
-					destruct: function(){
-					}
-				});
-				app = new Zippy.App({
-					'layout': {
-						'template': 'static/templates/base.mustache',
-						'context': '#main',
-						'views': [
-							{
-								'view': new Zippy.View('header','static/templates/header.mustache'),
-								'data': {
-									'title': 'Zippy',
-									'menu': [
-										{'url': '#/hello', 'name': 'hello'}
-									]
-								}
-							},
-							{
-								'view': new Zippy.View('footer','static/templates/footer.mustache')
 							}
-						]
-					}
-				});
-				app.listen({
-					'/hello': HelloController,
-					'/test' : TestController
-				});
-			}, false );
+						},
+						{
+							'view': new Zippy.View('footer','static/templates/footer.mustache')
+						}
+					]
+				}
+			});
+			app.listen({
+				'/hello': HelloController,
+				'/test' : TestController
+			});
+		});
 		</script>
 	</head>
 	<body>
