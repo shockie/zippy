@@ -75,7 +75,16 @@
 		if(location){
 			this._location = location;
 		}
-	};
+		this.onLoad();
+	}
+	
+	Controller.prototype.getView = function(selector, cb){
+		this._app._window.getView(selector,cb);
+	}
+	
+	Controller.prototype.addView= function(view){
+		return this._app._window.addView(view);
+	}
 	
 	Controller.prototype.render = function(){
 		var body = this._app._view.render(template,params);

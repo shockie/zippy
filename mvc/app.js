@@ -1,7 +1,13 @@
 (function(){
 	var self = this;
 	function App(ctx, config){
-		this._context = ctx || document.body;
+		if(!config){
+			$(document.body).html('<div id="zippy-container"></div>');
+			this._context = $(document.body).find('#zippy-container');
+			config = ctx;
+		}else{
+			this._context = ctx;
+		}
 		this._controllers = [];
 		this._properties = {};
 		config = config || {};
@@ -14,7 +20,7 @@
 	App.prototype.addWindow = function(){
 		this._window = new self.Window({
 			context: this._context,
-			views: this._properties.layout.views['global'],
+			views: this._properties.layout.views,
 			template: this._properties.layout.template,
 			base: this._properties.layout.context
 		});

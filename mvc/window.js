@@ -5,15 +5,19 @@
 	function Window(options){
 		options = options || {
 			context: document.body,
-			views: [],
+			views: []
 		};
+		this._views = {
+			global: [],
+			local: []
+		}
 		this._context = $(options.context);
 		this._base = new _view(options.base||document.body);
 		
-		this._views = [];
+		
 		for(var i=0; i< options.views.length; i++){
 			options.views[i].view.setData(options.views[i].data);
-			this._views.push(options.views[i].view);
+			this._views['global'].push(options.views[i].view);
 		}
 		
 		if(options.template){
@@ -26,11 +30,11 @@
 	Window.prototype.onDisplayed = function(){
 		this._base.display();
 		
-		if(this._views.length == 0){
+		if(this._views['global'].length == 0){
 			return;
 		}
-		for(var i=0; i< this._views.length; i++){
-			this._views[i].display();
+		for(var i=0; i< this._views['global'].length; i++){
+			this._views['global'][i].display();
 		}
 	}
 	
@@ -45,6 +49,37 @@
 		this._fetching = false;
 		this._content = content;
 		this.fire('window:ready');
+	}
+	
+	Window.prototype.addView = function(view){
+		var element = $(view.selector, this._context);
+		if(element.length === 0){
+			return false;
+		}
+		this._views.local.push(view);
+		return true;
+	}
+	
+	Window.prototype.getView = function(selector, cb){
+		var view = null;
+		for(var name in this._views.local){
+			if(this._views.local[name].selector === selector){
+				view = this._views.local[name];
+				break;
+			}
+		}
+		//if a local view responds, don't go to the globals
+		if(view){
+			cb(view);
+			return;
+		}
+
+		for(var name in this._views['global']){
+			if(this._views['global'][name].selector === selector){
+				cb(this._views['global'][name]);
+				break;
+			}
+		}
 	}
 	
 	Window.prototype.update = function(data){

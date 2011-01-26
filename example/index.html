@@ -27,46 +27,59 @@
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded",function(){
 				var HelloController = new Zippy.Controller({
-					onLock: function(){
-						console.log('locked on position, /hello');
+					onLoad: function(){
 					},
 					respond: function(){
-						this.update('{{hello}}', {hello: 'world'});
-						console.log('w00t got called, /hello');
+						this.getView('header', function(view){
+							view.display({
+								title: 'Hello World',
+								menu: [
+									{url: '#/test', name: 'test'},
+									{url: '#/hello', name: 'hello'},
+									{url: '/', name: 'home'}
+								]
+							});
+						});
+						this.update('<a href="{{url}}">{{name}}</a>', {
+							url: '#/test',
+							name: 'go to test'
+						});
 					},
 					destruct: function(){
-						console.log('sorry, have to go!, /hello');
 					}
 				});
 				var TestController = new Zippy.Controller({
-					onLock: function(){
-						console.log('locked on position, /test');
+					onLoad: function(){
 					},
 					respond: function(){
-						this.update('{{hello}}', {hello: 'test'});
-						console.log('w00t got called, /test');
+						this.getView('header', function(view){
+							view.display({
+								title: 'Test'
+							});
+						});
+						this.update('hello!');
 					},
 					destruct: function(){
-						console.log('sorry, have to go!, /test');
 					}
 				});
-				app = new Zippy.App(null, {
+				app = new Zippy.App({
 					'layout': {
 						'template': 'static/templates/base.mustache',
 						'context': '#main',
-						'views': {
-							'global': [
-								{
-									'view': new Zippy.View('header','static/templates/header.mustache'),
-									'data': {
-										'title': 'Zippy'
-									}
-								},
-								{
-									'view': new Zippy.View('footer','static/templates/footer.mustache')
+						'views': [
+							{
+								'view': new Zippy.View('header','static/templates/header.mustache'),
+								'data': {
+									'title': 'Zippy',
+									'menu': [
+										{'url': '#/hello', 'name': 'hello'}
+									]
 								}
-							]
-						}
+							},
+							{
+								'view': new Zippy.View('footer','static/templates/footer.mustache')
+							}
+						]
 					}
 				});
 				app.listen({
