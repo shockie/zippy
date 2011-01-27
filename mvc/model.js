@@ -12,5 +12,5 @@
 	}
 	
 	this.Model = Model;
-	Class.mixin(this.Model,this.Event);
+	Class.mixin(this.Model,this.Mixin.Event);
 }).call(Zippy);

@@ -2,8 +2,8 @@
 	<head>
 		<script type="text/javascript" src="../lib/zepto.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
+		<script type="text/javascript" src="../zippy.js"></script>
 		<script type="text/javascript">
-			var Zippy = function Zippy(){};
 			Zippy.Ajax = {
 				get: function(url,cb){
 					$.get(url,cb);
@@ -30,16 +30,6 @@
 				onLoad: function(){
 				},
 				respond: function(){
-					this.getView('header', function(view){
-						view.display({
-							title: 'Hello World',
-							menu: [
-								{url: '#/test', name: 'test'},
-								{url: '#/hello', name: 'hello'},
-								{url: '/', name: 'home'}
-							]
-						});
-					});
 					this.update('<a href="{{url}}">{{name}}</a>', {
 						url: '#/test',
 						name: 'go to test'
@@ -52,32 +42,29 @@
 				onLoad: function(){
 				},
 				respond: function(){
-					this.getView('header', function(view){
-						view.display({
-							title: 'Test'
-						});
-					});
 					this.update('hello!');
 				},
 				destruct: function(){
 				}
 			});
 			app = new Zippy.App({
-				'layout': {
-					'template': 'static/templates/base.mustache',
-					'context': '#main',
-					'views': [
+				layout: {
+					template: 'static/templates/base.mustache',
+					context: '#main',
+					views: [
 						{
-							'view': new Zippy.View('header','static/templates/header.mustache'),
-							'data': {
-								'title': 'Zippy',
-								'menu': [
-									{'url': '#/hello', 'name': 'hello'}
+							view: new Zippy.View('header','static/templates/header.mustache'),
+							data: {
+								title: 'Zippy',
+								menu: [
+									{url: '#/test', name: 'test'},
+									{url: '#/hello', name: 'hello'},
+									{url: '#/', name: 'home'}
 								]
 							}
 						},
 						{
-							'view': new Zippy.View('footer','static/templates/footer.mustache')
+							view: new Zippy.View('footer','static/templates/footer.mustache')
 						}
 					]
 				}

@@ -1,6 +1,7 @@
 (function(){
 	var _ajax = this.Ajax;
 	var _template = this.Template;
+	
 	function View(context, template){
 		this.selector = context;
 		this._context = $(context);
@@ -9,7 +10,7 @@
 			this._templateFile = template;
 			this.fetchTemplate(this._templateFile);
 		}
-		this.fire('view:new', {view: this});
+		Zippy.Event.fire('view:new', {view: this});
 	}
 	
 	View.prototype.setData = function(data){
@@ -57,12 +58,12 @@
 		if(this._template||template){
 			this.render(template||this._template,data||this._data);
 		}
-		this.fire('view:displayed');
+		Zippy.Event.fire('view:displayed');
 	}
 	
 	View.prototype.render = function(template,data){
 		this._context.html(_template.render(template, data));
 	}
 	this.View = View;
-	Class.mixin(this.View,this.Event);
+	Class.mixin(this.View, this.Mixin.Event);
 }).call(Zippy);

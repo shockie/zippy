@@ -14,7 +14,6 @@
 		this._context = $(options.context);
 		this._base = new _view(options.base||document.body);
 		
-		
 		for(var i=0; i< options.views.length; i++){
 			options.views[i].view.setData(options.views[i].data);
 			this._views['global'].push(options.views[i].view);
@@ -24,7 +23,7 @@
 			this._file = options.template;
 			this.fetch(this._file);
 		}
-		this.on('window:displayed', this.onDisplayed.bind(this));
+		Zippy.Event.on('window:displayed', this.onDisplayed.bind(this));
 	}
 	
 	Window.prototype.onDisplayed = function(){
@@ -48,7 +47,7 @@
 	Window.prototype.onFetch = function(content){
 		this._fetching = false;
 		this._content = content;
-		this.fire('window:ready');
+		Zippy.Event.fire('window:ready');
 	}
 	
 	Window.prototype.addView = function(view){
@@ -88,7 +87,7 @@
 	
 	Window.prototype.display = function(data){
 		if(!this._content && this._file){
-			this.on('window:ready', this.display.bind(this));
+			Zippy.Event.on('window:ready', this.display.bind(this));
 			this.fetch(this._file);
 			return;
 		}
@@ -98,13 +97,13 @@
 		}else{
 			this.render('{{body}}', data);
 		}
-		this.fire('window:displayed');
+		Zippy.Event.fire('window:displayed');
 	}
 	
 	Window.prototype.render = function(template, data){
 		this._context.html(_template.render(template,data));
 	}
 	
-	Class.mixin(Window,this.Event);
 	this.Window = Window;
+	Class.mixin(this.Window, this.Mixin.Event);
 }).call(Zippy);

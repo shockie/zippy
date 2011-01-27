@@ -32,10 +32,10 @@
 	}
 	
 	App.prototype.onChangeLocation = function(data){
-		this.fire('controller:destruct', {
+		Zippy.Event.fire('controller:destruct', {
 			location: data.old
 		});
-		this.fire('controller:construct', {
+		Zippy.Event.fire('controller:construct', {
 			location: data.url
 		});
 	}
@@ -45,7 +45,7 @@
 			this.addController(location, routing[location]);
 		}
 		this.router = new self.Router();
-		this.router.on('router:change', this.onChangeLocation.bind(this));
+		Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
 		this.router.prepare();
 	}
 	
@@ -56,10 +56,10 @@
 	App.prototype.addController = function(location, controller){
 		if(!this._routing[location]){
 			this._routing[location] = controller;
-			this._routing[location].prepare(this, location);
-			this._routing[location].on('view:update', this._window.update.bind(this._window));
+			this._routing[location].prepare(this._window, location);
+			Zippy.Event.on('view:update', this._window.update.bind(this._window));
 		}
 	}
 	this.App = App;
-	Class.mixin(this.App, this.Event);
+	Class.mixin(this.App, this.Mixin.Event);
 }).call(Zippy);

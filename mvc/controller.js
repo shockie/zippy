@@ -6,11 +6,10 @@
 			this[name] = methods[name];
 		}
 	}
-	Class.mixin(Controller, this.Event);
 	Controller.prototype.addView = function(view){
-		this.on('view:select', function(data){
+		Zippy.Event.on('view:select', function(data){
 			if(this.selector === data.selector){
-				data.controller.fire('view:found', {
+				Zippy.Event.fire('view:found', {
 					view:this
 				});
 			}
@@ -19,11 +18,11 @@
 	}
 	
 	Controller.prototype.getView = function(selector, cb){
-		this.on('view:found', function(data){
+		Zippy.Event.on('view:found', function(data){
 			cb(data.view);
 		});
 		
-		this.fire('view:select', {
+		Zippy.Event.fire('view:select', {
 			selector: selector,
 			controller: this
 		});
@@ -46,7 +45,7 @@
 	}
 	
 	Controller.prototype.update = function(template, data){
-		this.fire('view:update', {
+		Zippy.Event.fire('view:update', {
 			template: template,
 			data:data
 		});
@@ -67,10 +66,10 @@
 		}
 	}
 	
-	Controller.prototype.prepare = function(app,location){
-		this._app = app;
-		this._app.on('controller:destruct', this.onDestruct.bind(this));
-		this._app.on('controller:construct', this.onConstruct.bind(this));
+	Controller.prototype.prepare = function(window,location){
+		this._window = window;
+		Zippy.Event.on('controller:destruct', this.onDestruct.bind(this));
+		Zippy.Event.on('controller:construct', this.onConstruct.bind(this));
 		if(location){
 			this._location = location;
 		}
@@ -78,16 +77,12 @@
 	}
 	
 	Controller.prototype.getView = function(selector, cb){
-		this._app._window.getView(selector,cb);
+		this._window.getView(selector,cb);
 	}
 	
-	Controller.prototype.addView= function(view){
-		return this._app._window.addView(view);
-	}
-	
-	Controller.prototype.render = function(){
-		var body = this._app._view.render(template,params);
-		this._app._context.innerHTML = body;
+	Controller.prototype.addView = function(view){
+		return this._window.addView(view);
 	}
 	this.Controller = Controller;
+	Class.mixin(this.Controller, this.Mixin.Event);
 }).call(Zippy);

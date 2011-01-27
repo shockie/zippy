@@ -48,5 +48,5 @@
 			}
 		}
 	}
-	this.Event = Event;
+	this.Mixin.Event = Event;
 }).call(Zippy);

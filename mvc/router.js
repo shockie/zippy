@@ -12,7 +12,7 @@
 		}
 		var old = this._location;
 		this._location = location;
-		this.fire('router:change', {
+		Zippy.Event.fire('router:change', {
 			url:this._location,
 			old:old
 		});
@@ -22,7 +22,7 @@
 		this._interval = setInterval(function(){
 			this.dispatch(window.location);
 		}.bind(this), 100);
-		this.fire('router:prepare');
+		Zippy.Event.fire('router:prepare');
 	}
 	
 	Router.prototype.stop = function(){
@@ -37,5 +37,5 @@
 		return location;
 	}
 	this.Router = Router;
-	Class.mixin(this.Router,this.Event);
+	Class.mixin(this.Router, this.Mixin.Event);
 }).call(Zippy);
