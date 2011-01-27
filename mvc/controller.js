@@ -45,7 +45,7 @@
 	}
 	
 	Controller.prototype.update = function(template, data){
-		Zippy.Event.fire('view:update', {
+		this._window.update({
 			template: template,
 			data:data
 		});
@@ -66,8 +66,8 @@
 		}
 	}
 	
-	Controller.prototype.prepare = function(window,location){
-		this._window = window;
+	Controller.prototype.prepare = function(windowed,location){s
+		this._window = windowed;
 		Zippy.Event.on('controller:destruct', this.onDestruct.bind(this));
 		Zippy.Event.on('controller:construct', this.onConstruct.bind(this));
 		if(location){
@@ -76,13 +76,6 @@
 		this.onLoad();
 	}
 	
-	Controller.prototype.getView = function(selector, cb){
-		this._window.getView(selector,cb);
-	}
-	
-	Controller.prototype.addView = function(view){
-		return this._window.addView(view);
-	}
 	this.Controller = Controller;
 	Class.mixin(this.Controller, this.Mixin.Event);
 }).call(Zippy);

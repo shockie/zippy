@@ -2,52 +2,48 @@
 	var _ajax = this.Ajax;
 	var _template = this.Template;
 	var _view = this.View;
+	
 	function Window(options){
 		options = options || {
-			context: document.body,
+			context: document,
 			views: []
 		};
+		this._body = null;
 		this._views = {
 			global: [],
 			local: []
 		}
-		this._context = $(options.context);
-		this._base = new _view(options.base||document.body);
-		
-		for(var i=0; i< options.views.length; i++){
-			options.views[i].view.setData(options.views[i].data);
-			this._views['global'].push(options.views[i].view);
-		}
-		
-		if(options.template){
-			this._file = options.template;
-			this.fetch(this._file);
-		}
-		Zippy.Event.on('window:displayed', this.onDisplayed.bind(this));
-	}
-	
-	Window.prototype.onDisplayed = function(){
+		this.options = options;
+		this._context = options.context;
+		this._head = new _view('head');
+		$(this._context.body).html('<div id="zippy-container"></div>');
+		this._base = new _view($('#zippy-container'), options.template || null);
+		Zippy.Event.on('view:displayed', this.onDisplayed.bind(this));
 		this._base.display();
-		
-		if(this._views['global'].length == 0){
-			return;
-		}
-		for(var i=0; i< this._views['global'].length; i++){
-			this._views['global'][i].display();
-		}
 	}
 	
-	Window.prototype.fetch = function(url){
-		if(!this._fetching){
-			this._fetching = true;
-			_ajax.get(url, this.onFetch.bind(this));
+	Window.prototype.onDisplayed = function(data){
+		if(data.selector === this._base._context.selector){
+			this._body = new _view(this.options.base);
+			this._body.display();
+			for(var i=0; i< this.options.views.length; i++){
+				this.options.views[i].view.setData(this.options.views[i].data);
+				this._views['global'].push(this.options.views[i].view);
+			}
+			if(this._views['global'].length == 0){
+				return;
+			}
+			for(var i=0; i< this._views['global'].length; i++){
+				if($(this._views['global'][i].selector), this._base._context){
+					this._views['global'][i].display();
+				}else{
+					this._view['global'].splice(i,1);
+				}
+			}
+			this.ready = true;
+			Zippy.Event.stopObserving('view:displayed', this.onDisplayed.bind(this));
+			Zippy.Event.fire('window:ready');
 		}
-	}
-	
-	Window.prototype.onFetch = function(content){
-		this._fetching = false;
-		this._content = content;
-		Zippy.Event.fire('window:ready');
 	}
 	
 	Window.prototype.addView = function(view){
@@ -82,26 +78,7 @@
 	}
 	
 	Window.prototype.update = function(data){
-		this._base.display(data.data, data.template);
-	}
-	
-	Window.prototype.display = function(data){
-		if(!this._content && this._file){
-			Zippy.Event.on('window:ready', this.display.bind(this));
-			this.fetch(this._file);
-			return;
-		}
-		
-		if(this._file){
-			this.render(this._content, data);
-		}else{
-			this.render('{{body}}', data);
-		}
-		Zippy.Event.fire('window:displayed');
-	}
-	
-	Window.prototype.render = function(template, data){
-		this._context.html(_template.render(template,data));
+		this._body.display(data.data, data.template);
 	}
 	
 	this.Window = Window;

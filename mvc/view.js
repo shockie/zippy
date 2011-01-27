@@ -39,14 +39,19 @@
 		
 	}
 	
+	View.prototype.update = function(selector, content){
+		$(selector,this._context).html(content);
+	}
+	
+	View.prototype.select = function(){
+		this._context = $(this._context.selector);
+	}
+	
 	View.prototype.display = function(data, template){
-		//TODO: add template checking
-		if(this._context.length == 0){
-			this._context = $(this._context.selector);
+		if(this._context.length === 0){
+			this.select();
 		}
-		
 		this.listen();
-		
 		if(this._templateFile && !this._template && !template){
 			this.on('template:loaded', this.display.bind(this));
 			this.fetchTemplate(this._templateFile);
@@ -58,7 +63,8 @@
 		if(this._template||template){
 			this.render(template||this._template,data||this._data);
 		}
-		Zippy.Event.fire('view:displayed');
+		//this.fire('view:displayed');
+		Zippy.Event.fire('view:displayed', {selector: this._context.selector});
 	}
 	
 	View.prototype.render = function(template,data){

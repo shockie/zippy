@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<title></title>
 		<script type="text/javascript" src="../lib/zepto.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
 		<script type="text/javascript" src="../zippy.js"></script>
@@ -29,7 +30,13 @@
 			var HelloController = new Zippy.Controller({
 				onLoad: function(){
 				},
+				listen: function(){
+					$('a').live('click', function(){
+						console.log('clicked');
+					});
+				},
 				respond: function(){
+					this._window._head.update('title', 'Hello');
 					this.update('<a href="{{url}}">{{name}}</a>', {
 						url: '#/test',
 						name: 'go to test'
@@ -42,6 +49,7 @@
 				onLoad: function(){
 				},
 				respond: function(){
+					this._window._head.update('title', 'Test');
 					this.update('hello!');
 				},
 				destruct: function(){

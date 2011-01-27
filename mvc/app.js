@@ -1,30 +1,23 @@
 (function(){
 	var self = this;
-	function App(ctx, config){
-		if(!config){
-			$(document.body).html('<div id="zippy-container"></div>');
-			this._context = $(document.body).find('#zippy-container');
-			config = ctx;
-		}else{
-			this._context = ctx;
-		}
+	function App(config){
+		this._context = document;
 		this._routing = {};
 		this._properties = {};
 		config = config || {};
 		for(var name in config){
 			this._properties[name] = config[name];
 		}
-		this.addWindow();
+		this.initiate();
 	}
 	
-	App.prototype.addWindow = function(){
+	App.prototype.initiate = function(){
 		this._window = new self.Window({
 			context: this._context,
 			views: this._properties.layout.views,
 			template: this._properties.layout.template,
 			base: this._properties.layout.context
 		});
-		this._window.display();
 	}
 	
 	App.prototype.stop = function(){
@@ -41,23 +34,36 @@
 	}
 	
 	App.prototype.listen = function(routing){
-		for(var location in routing){
-			this.addController(location, routing[location]);
+		if(routing){
+			for(var location in routing){
+				this.addController(location, routing[location]);
+			}
 		}
-		this.router = new self.Router();
-		Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
-		this.router.prepare();
+		if(this._window.ready){
+			Zippy.Event.stopListening('window:ready', this.listen.bind(this));
+			this.router = new self.Router();
+			Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
+			this.prepare();
+			this.router.prepare();
+		}else{
+			Zippy.Event.on('window:ready', this.listen.bind(this));
+		}
 	}
 	
 	App.prototype.redirect = function(location){
 		window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + location;
-	};
+	}
+	
+	App.prototype.prepare = function(){
+		for(var location in this._routing){
+			this._routing[location].prepare(this._window, location);
+			//Zippy.Event.on('view:update', this._window.update.bind(this._window));
+		}
+	}
 	
 	App.prototype.addController = function(location, controller){
 		if(!this._routing[location]){
 			this._routing[location] = controller;
-			this._routing[location].prepare(this._window, location);
-			Zippy.Event.on('view:update', this._window.update.bind(this._window));
 		}
 	}
 	this.App = App;
