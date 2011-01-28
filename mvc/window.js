@@ -25,8 +25,15 @@
 	
 	Window.prototype.addBaseView = function(){
 		this._base = new context.View($('#zippy-container'), this.options.template || null);
-		Zippy.Event.on('view:displayed', this.onDisplayed.bind(this));
+		Zippy.Event.on('view:displayed', this.onReady.bind(this));
 		this._base.display();
+	}
+	
+	Window.prototype.onReady = function(data){
+		if(data.selector === this._base._context.selector){
+			this._body = new context.View(this.options.base);
+			this._body.display();
+		}
 	}
 	
 	Window.prototype.onDisplayed = function(data){
@@ -62,6 +69,14 @@
 		return true;
 	}
 	
+	Window.prototype.setTitle = function(title){
+		this.options.context.title = title;
+	}
+	
+	Window.prototype.getBodyView = function(){
+		return this._body;
+	}
+	
 	Window.prototype.getView = function(selector, cb){
 		var view = null;
 		for(var name in this._views.local){
@@ -85,7 +100,7 @@
 	}
 	
 	Window.prototype.update = function(data){
-		this._body.display(data.data, data.template);
+		this._body.display(data.template, data.data);
 	}
 	
 	context.Window = Window;

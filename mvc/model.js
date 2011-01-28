@@ -1,4 +1,4 @@
-(function(){
+(function(context){
 	function Model(properties){
 		this._p = properties || {};
 	}
@@ -11,6 +11,6 @@
 		this._p[name] = value;
 	}
 	
-	this.Model = Model;
-	Class.mixin(this.Model,this.Mixin.Event);
-}).call(Zippy);
+	context.Model = Model;
+	Class.mixin(context.Model,context.Mixin.Event);
+})(Zippy);

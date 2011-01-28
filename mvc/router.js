@@ -1,12 +1,12 @@
 (function(context){
 	function Router(routing){
 		this._routing = routing || {};
-		this._location = this.parse(window.location.hash);
+		this._location = null;
 	}
 	
 	Router.prototype.dispatch = function(loc){
 		var location = this.parse(loc.hash || '');
-		if(this._location === location){
+		if(this._location && this._location === location){
 			return;
 		}
 		var old = this._location;

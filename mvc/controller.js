@@ -1,11 +1,21 @@
 (function(context){
 	function Controller(methods){
 		this._views = [];
+		this._view = null;
 		methods = methods || {};
 		for(var name in methods){
 			this[name] = methods[name];
 		}
 	}
+	
+	Controller.prototype.setView = function(view){
+		this._view = view;
+	}
+	
+	Controller.prototype.clearView = function(){
+		this._view = null;
+	}
+	
 	Controller.prototype.addView = function(view){
 		Zippy.Event.on('view:select', function(data){
 			if(this.selector === data.selector){
@@ -66,7 +76,7 @@
 		}
 	}
 	
-	Controller.prototype.prepare = function(windowed,location){s
+	Controller.prototype.prepare = function(windowed,location){
 		this._window = windowed;
 		if(location){
 			this._location = location;

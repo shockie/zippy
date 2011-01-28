@@ -38,9 +38,12 @@
 	App.prototype.onChangeLocation = function(data){
 		if(this._routing[data.old]){
 			this._routing[data.old].destruct();
+			this._routing[data.old].clearView();
 		}
 		
 		if(this._routing[data.url]){
+			this._window._body.setDelegate(this._routing[data.url]);
+			this._routing[data.url].setView(this._window.getBodyView());
 			this._routing[data.url].construct();
 		}
 	}
@@ -49,7 +52,6 @@
 		if(routing){
 			for(var location in routing){
 				this._routing[location] = routing[location];
-//				this.addController(location, routing[location]);
 			}
 		}
 	}
@@ -57,16 +59,7 @@
 	App.prototype.listen = function(){
 		Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
 		this.router = new context.Router();
-		this.router.prepare();
-		// if(this._window && this._window.ready){
-		// 	Zippy.Event.stopListening('window:ready', this.listen.bind(this));
-		// 	this.router = new self.Router();
-		// 	Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
-		// 	this.prepare();
-		// 	this.router.prepare();
-		// }else{
-		// 	Zippy.Event.on('window:ready', this.listen.bind(this));
-		// }
+		this.prepare();
 	}
 	
 	App.prototype.redirect = function(location){
@@ -74,9 +67,9 @@
 	}
 	
 	App.prototype.prepare = function(){
+		this.router.prepare();
 		for(var location in this._routing){
 			this._routing[location].prepare(this._window, location);
-			//Zippy.Event.on('view:update', this._window.update.bind(this._window));
 		}
 	}
 	

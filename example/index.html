@@ -19,82 +19,41 @@
 		<script type="text/javascript" src="../lang/class.js"></script>
 		<script type="text/javascript" src="../lang/function.js"></script>
 		<script type="text/javascript" src="../mvc/event.js"></script>
-		<!--<script type="text/javascript" src="../mvc/model.js"></script>
-		<script type="text/javascript" src="../mvc/view.js"></script>-->
+		<script type="text/javascript" src="../mvc/model.js"></script>
+		<script type="text/javascript" src="../mvc/view.js"></script>
 		<script type="text/javascript" src="../mvc/window.js"></script>
 		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/router.js"></script>
 		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){
-			// var HelloController = new Zippy.Controller({
-			// 				onLoad: function(){
-			// 				},
-			// 				listen: function(){
-			// 					$('a').live('click', function(){
-			// 						console.log('clicked');
-			// 					});
-			// 				},
-			// 				respond: function(){
-			// 					this._window._head.update('title', 'Hello');
-			// 					this.update('<a href="{{url}}">{{name}}</a>', {
-			// 						url: '#/test',
-			// 						name: 'go to test'
-			// 					});
-			// 				},
-			// 				destruct: function(){
-			// 				}
-			// 			});
-			// 			var TestController = new Zippy.Controller({
-			// 				onLoad: function(){
-			// 				},
-			// 				respond: function(){
-			// 					this._window._head.update('title', 'Test');
-			// 					this.update('hello!');
-			// 				},
-			// 				destruct: function(){
-			// 				}
-			// 			});
 			app = new Zippy.App({
-				
+				template: 'static/templates/base.mustache',
+				context: '#main'
 			});
 			app.setControllers({
 				'/hello': new Zippy.Controller({
 					construct:function(){
-						console.log('hello');
+						this._window.setTitle('Hello World!');
+						this.update('<a href="#/test">go to test</a>');
+						$(this._view.getContext()).delegate('a', 'click', function(event){
+							if(this._view.getContext().css('background-color') == 'red'){
+								this._view.getContext().css('background-color', 'blue');
+							}else{
+								this._view.getContext().css('background-color', 'red');
+							}
+							
+							event.preventDefault();
+						}.bind(this));
 					},
-					destruct: function(){
-						console.log('bye');
+					destruct: function(container){
+						console.log('goodbye');
+						$(this._view.getContext()).unbind('click');
+						this.update('');
 					}
 				})
 			});
 			app.listen();
-			// app = new Zippy.App({
-			// 	layout: {
-			// 		template: 'static/templates/base.mustache',
-			// 		context: '#main',
-			// 		views: [
-			// 			{
-			// 				view: new Zippy.View('header','static/templates/header.mustache'),
-			// 				data: {
-			// 					title: 'Zippy',
-			// 					menu: [
-			// 						{url: '#/test', name: 'test'},
-			// 						{url: '#/hello', name: 'hello'},
-			// 						{url: '#/', name: 'home'}
-			// 					]
-			// 				}
-			// 			},
-			// 			{
-			// 				view: new Zippy.View('footer','static/templates/footer.mustache')
-			// 			}
-			// 		]
-			// 	}
-			// });
-			// app.listen({
-			// 	'/hello': HelloController,
-			// 	'/test' : TestController
-			// });
 		});
 		</script>
 	</head>
