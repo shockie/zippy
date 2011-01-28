@@ -1,30 +1,37 @@
-(function(){
-	var _ajax = this.Ajax;
-	var _template = this.Template;
-	var _view = this.View;
-	
+(function(context){
 	function Window(options){
 		options = options || {
 			context: document,
 			views: []
 		};
-		this._body = null;
 		this._views = {
 			global: [],
 			local: []
 		}
 		this.options = options;
-		this._context = options.context;
-		this._head = new _view('head');
-		$(this._context.body).html('<div id="zippy-container"></div>');
-		this._base = new _view($('#zippy-container'), options.template || null);
+		this._body = null;
+		this.initiate();
+	}
+	
+	Window.prototype.initiate = function(){
+		$(this.options.context.body).html('<div id="zippy-container"></div>');
+		this.addHeadView();
+		this.addBaseView();
+	}
+	
+	Window.prototype.addHeadView = function(){
+		this._head = new context.View('head');
+	}
+	
+	Window.prototype.addBaseView = function(){
+		this._base = new context.View($('#zippy-container'), this.options.template || null);
 		Zippy.Event.on('view:displayed', this.onDisplayed.bind(this));
 		this._base.display();
 	}
 	
 	Window.prototype.onDisplayed = function(data){
 		if(data.selector === this._base._context.selector){
-			this._body = new _view(this.options.base);
+			this._body = new context.View(this.options.base);
 			this._body.display();
 			for(var i=0; i< this.options.views.length; i++){
 				this.options.views[i].view.setData(this.options.views[i].data);
@@ -47,7 +54,7 @@
 	}
 	
 	Window.prototype.addView = function(view){
-		var element = $(view.selector, this._context);
+		var element = $(view.selector, this.options.context);
 		if(element.length === 0){
 			return false;
 		}
@@ -81,6 +88,6 @@
 		this._body.display(data.data, data.template);
 	}
 	
-	this.Window = Window;
-	Class.mixin(this.Window, this.Mixin.Event);
-}).call(Zippy);
+	context.Window = Window;
+	Class.mixin(context.Window, context.Mixin.Event);
+})(Zippy);

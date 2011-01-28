@@ -1,13 +1,12 @@
-(function(){
+(function(context){
 	function Router(routing){
 		this._routing = routing || {};
+		this._location = this.parse(window.location.hash);
 	}
 	
 	Router.prototype.dispatch = function(loc){
 		var location = this.parse(loc.hash || '');
-		if(!this._location){
-			this._location = location;
-		}else if(this._location === location){
+		if(this._location === location){
 			return;
 		}
 		var old = this._location;
@@ -36,6 +35,6 @@
 		}
 		return location;
 	}
-	this.Router = Router;
-	Class.mixin(this.Router, this.Mixin.Event);
-}).call(Zippy);
+	context.Router = Router;
+	Class.mixin(context.Router, context.Mixin.Event);
+})(Zippy);

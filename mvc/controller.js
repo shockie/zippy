@@ -1,4 +1,4 @@
-(function(){
+(function(context){
 	function Controller(methods){
 		this._views = [];
 		methods = methods || {};
@@ -32,7 +32,7 @@
 		
 	}
 	
-	Controller.prototype.respond = function(){
+	Controller.prototype.construct = function(){
 		
 	}
 	
@@ -62,20 +62,18 @@
 		if(data.location === this._location){
 			var regex = new RegExp(this._location);
 			this._active = true;
-			this.respond(regex.exec(data.location)||{});
+			this.construct(regex.exec(data.location)||{});
 		}
 	}
 	
 	Controller.prototype.prepare = function(windowed,location){s
 		this._window = windowed;
-		Zippy.Event.on('controller:destruct', this.onDestruct.bind(this));
-		Zippy.Event.on('controller:construct', this.onConstruct.bind(this));
 		if(location){
 			this._location = location;
 		}
 		this.onLoad();
 	}
 	
-	this.Controller = Controller;
-	Class.mixin(this.Controller, this.Mixin.Event);
-}).call(Zippy);
+	context.Controller = Controller;
+	Class.mixin(context.Controller, context.Mixin.Event);
+})(Zippy);

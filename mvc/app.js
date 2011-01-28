@@ -1,5 +1,4 @@
-(function(){
-	var self = this;
+(function(context){
 	function App(config){
 		this._context = document;
 		this._routing = {};
@@ -12,12 +11,24 @@
 	}
 	
 	App.prototype.initiate = function(){
-		this._window = new self.Window({
+		var options = {
 			context: this._context,
-			views: this._properties.layout.views,
-			template: this._properties.layout.template,
-			base: this._properties.layout.context
-		});
+			views:[]
+		};
+		
+		if(this._properties.views){
+			options.views = this._properties.views;
+		}
+		
+		if(this._properties.template){
+			options.template = this._properties.template;
+		}
+		
+		if(this._properties.context){
+			options.base = this._properties.context;
+		}
+		
+		this._window = new context.Window(options);
 	}
 	
 	App.prototype.stop = function(){
@@ -25,29 +36,37 @@
 	}
 	
 	App.prototype.onChangeLocation = function(data){
-		Zippy.Event.fire('controller:destruct', {
-			location: data.old
-		});
-		Zippy.Event.fire('controller:construct', {
-			location: data.url
-		});
+		if(this._routing[data.old]){
+			this._routing[data.old].destruct();
+		}
+		
+		if(this._routing[data.url]){
+			this._routing[data.url].construct();
+		}
 	}
 	
-	App.prototype.listen = function(routing){
+	App.prototype.setControllers = function(routing){
 		if(routing){
 			for(var location in routing){
-				this.addController(location, routing[location]);
+				this._routing[location] = routing[location];
+//				this.addController(location, routing[location]);
 			}
 		}
-		if(this._window.ready){
-			Zippy.Event.stopListening('window:ready', this.listen.bind(this));
-			this.router = new self.Router();
-			Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
-			this.prepare();
-			this.router.prepare();
-		}else{
-			Zippy.Event.on('window:ready', this.listen.bind(this));
-		}
+	}
+	
+	App.prototype.listen = function(){
+		Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
+		this.router = new context.Router();
+		this.router.prepare();
+		// if(this._window && this._window.ready){
+		// 	Zippy.Event.stopListening('window:ready', this.listen.bind(this));
+		// 	this.router = new self.Router();
+		// 	Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
+		// 	this.prepare();
+		// 	this.router.prepare();
+		// }else{
+		// 	Zippy.Event.on('window:ready', this.listen.bind(this));
+		// }
 	}
 	
 	App.prototype.redirect = function(location){
@@ -66,6 +85,6 @@
 			this._routing[location] = controller;
 		}
 	}
-	this.App = App;
-	Class.mixin(this.App, this.Mixin.Event);
-}).call(Zippy);
+	context.App = App;
+	Class.mixin(context.App, context.Mixin.Event);
+})(Zippy);
