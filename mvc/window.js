@@ -29,37 +29,38 @@
 		this._base.display();
 	}
 	
-	Window.prototype.onReady = function(data){
-		if(data.selector === this._base._context.selector){
-			this._body = new context.View(this.options.base);
-			this._body.display();
-		}
+	Window.prototype.addBodyView = function(){
+		this._body = new context.View(this.options.base);
+		this._body.display();
 	}
 	
-	Window.prototype.onDisplayed = function(data){
+	Window.prototype.addDefaultViews = function(){
+		for(var i=0; i< this.options.views.length; i++){
+			this.options.views[i].view.setData(this.options.views[i].data);
+			this._views['global'].push(this.options.views[i].view);
+		}
+		if(this._views['global'].length == 0){
+			return;
+		}
+		for(var i=0; i< this._views['global'].length; i++){
+			if($(this._views['global'][i].selector), this._base._context){
+				this._views['global'][i].display();
+			}else{
+				this._view['global'].splice(i,1);
+			}
+		}		
+	}
+	
+	Window.prototype.onReady = function(data){
 		if(data.selector === this._base._context.selector){
-			this._body = new context.View(this.options.base);
-			this._body.display();
-			for(var i=0; i< this.options.views.length; i++){
-				this.options.views[i].view.setData(this.options.views[i].data);
-				this._views['global'].push(this.options.views[i].view);
-			}
-			if(this._views['global'].length == 0){
-				return;
-			}
-			for(var i=0; i< this._views['global'].length; i++){
-				if($(this._views['global'][i].selector), this._base._context){
-					this._views['global'][i].display();
-				}else{
-					this._view['global'].splice(i,1);
-				}
-			}
+			this.addBodyView();
+			this.addDefaultViews();
 			this.ready = true;
-			Zippy.Event.stopObserving('view:displayed', this.onDisplayed.bind(this));
+			Zippy.Event.stopListening('view:displayed', this.onReady.bind(this));
 			Zippy.Event.fire('window:ready');
 		}
 	}
-	
+		
 	Window.prototype.addView = function(view){
 		var element = $(view.selector, this.options.context);
 		if(element.length === 0){

@@ -29,7 +29,16 @@
 		$(document).ready(function(){
 			app = new Zippy.App({
 				template: 'static/templates/base.mustache',
-				context: '#main'
+				context: '#main',
+				views: [
+					{ 
+						view: new Zippy.View('header', 'static/templates/header.mustache'),
+						data: {title : 'Zippy Example'}
+					},
+					{ 
+						view: new Zippy.View('footer', 'static/templates/footer.mustache')
+					}
+				]
 			});
 			app.setControllers({
 				'/hello': new Zippy.Controller({
