@@ -34,6 +34,14 @@
 		this._body.display();
 	}
 	
+	Window.prototype.getDefaultView = function(selector, cb){
+		for(var i=0; i< this._views['global'].length; i++){
+			if(this._views['global'][i].selector === selector){
+				return this._views['global'][i];
+			}
+		}
+	}
+	
 	Window.prototype.addDefaultViews = function(){
 		for(var i=0; i< this.options.views.length; i++){
 			this.options.views[i].view.setData(this.options.views[i].data);

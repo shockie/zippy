@@ -45,3 +45,15 @@ Zippy.Event = (function(){
 		}
 	}
 })();
+
+Zippy.Ajax = {
+	get: function(url,cb){
+		$.get(url,cb);
+	}
+};
+
+Zippy.Template = {
+	render: function(template, data){
+		return Mustache.to_html(template, data);
+	}
+};

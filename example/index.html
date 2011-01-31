@@ -3,18 +3,14 @@
 		<title></title>
 		<script type="text/javascript" src="../lib/zepto.js"></script>
 		<script type="text/javascript" src="../lib/mustache.js"></script>
+		<script type="text/javascript" src="../lib/jade.js"></script>
 		<script type="text/javascript" src="../zippy.js"></script>
 		<script type="text/javascript">
-			Zippy.Ajax = {
-				get: function(url,cb){
-					$.get(url,cb);
-				}
-			};
-			Zippy.Template = {
-				render: function(template, data){
-					return Mustache.to_html(template, data);
-				}
-			};
+			Zippy.Template.render = function(template,data){
+				return jade.render(template,{
+					locals: data
+				});
+			}
 		</script>
 		<script type="text/javascript" src="../lang/class.js"></script>
 		<script type="text/javascript" src="../lang/function.js"></script>
@@ -28,15 +24,15 @@
 		<script type="text/javascript">
 		$(document).ready(function(){
 			app = new Zippy.App({
-				template: 'static/templates/base.mustache',
+				template: 'static/templates/base.jade',
 				context: '#main',
 				views: [
 					{ 
-						view: new Zippy.View('header', 'static/templates/header.mustache'),
+						view: new Zippy.View('header', 'static/templates/header.jade'),
 						data: {title : 'Zippy Example'}
 					},
 					{ 
-						view: new Zippy.View('footer', 'static/templates/footer.mustache')
+						view: new Zippy.View('footer', 'static/templates/footer.jade')
 					}
 				]
 			});
@@ -48,8 +44,14 @@
 						$(this._view.getContext()).delegate('a', 'click', function(event){
 							if(this._view.getContext().css('background-color') == 'red'){
 								this._view.getContext().css('background-color', 'blue');
+								this._window.getDefaultView('header').update({
+									title: 'blue header!'
+								});
 							}else{
 								this._view.getContext().css('background-color', 'red');
+								this._window.getDefaultView('header').update({
+									title: 'red header!'
+								});
 							}
 							
 							event.preventDefault();

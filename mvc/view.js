@@ -49,7 +49,11 @@
 	}
 	
 	View.prototype.update = function(selector, content){
-		$(selector,this._context).html(content);
+		if(arguments.length == 2){
+			$(selector,this._context).html(content);
+		}else if(arguments.length == 1){
+			this.display(null,selector);
+		}
 	}
 	
 	View.prototype.select = function(){
