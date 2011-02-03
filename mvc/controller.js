@@ -1,41 +1,16 @@
 (function(context){
-	function Controller(methods){
-		this._views = [];
-		this._view = null;
+	function Controller(routing, methods){
+		this._routing = routing || {};
 		methods = methods || {};
 		for(var name in methods){
 			this[name] = methods[name];
 		}
+		Zippy.Event.on('router:change', this.respond.bind(this));
+		Zippy.Event.on('router:ready', this.initialize.bind(this));
 	}
-	
-	Controller.prototype.setView = function(view){
-		this._view = view;
-	}
-	
-	Controller.prototype.clearView = function(){
-		this._view = null;
-	}
-	
-	Controller.prototype.addView = function(view){
-		Zippy.Event.on('view:select', function(data){
-			if(this.selector === data.selector){
-				Zippy.Event.fire('view:found', {
-					view:this
-				});
-			}
-		}.bind(view));
-		this._views.push(view);
-	}
-	
-	Controller.prototype.getView = function(selector, cb){
-		Zippy.Event.on('view:found', function(data){
-			cb(data.view);
-		});
 		
-		Zippy.Event.fire('view:select', {
-			selector: selector,
-			controller: this
-		});
+	Controller.prototype.initialize = function(){
+		
 	}
 	
 	Controller.prototype.listen = function(){
@@ -54,13 +29,12 @@
 		
 	}
 	
-	Controller.prototype.update = function(template, data){
-		this._window.update({
-			template: template,
-			data:data
-		});
+	Controller.prototype.respond = function(data){
+		if(this._routing && this._routing[data.url] && this[this._routing[data.url]]){
+			this[this._routing[data.url]]();
+		}
 	}
-	
+		
 	Controller.prototype.onDestruct = function(data){
 		if(data.location === this._location && this._active){
 			this._active = false;

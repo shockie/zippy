@@ -6,22 +6,27 @@
 	
 	Router.prototype.dispatch = function(loc){
 		var location = this.parse(loc.hash || '');
-		if(this._location && this._location === location){
-			return;
+		if(this._location && this._location !== location){
+			var old = this._location;
+			this._location = location;
+			Zippy.Event.fire('router:change', {
+				url:this._location,
+				old:old
+			});
+		}else if(!this._location){
+			this._location = location;
+			Zippy.Event.fire('router:change', {
+				url:this._location,
+				old: null
+			});
 		}
-		var old = this._location;
-		this._location = location;
-		Zippy.Event.fire('router:change', {
-			url:this._location,
-			old:old
-		});
 	}
 	
 	Router.prototype.prepare = function(){
 		this._interval = setInterval(function(){
 			this.dispatch(window.location);
 		}.bind(this), 100);
-		Zippy.Event.fire('router:prepare');
+		Zippy.Event.fire('router:ready');
 	}
 	
 	Router.prototype.stop = function(){

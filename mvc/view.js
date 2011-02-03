@@ -1,15 +1,33 @@
 (function(context){
-	function View(context, template){
+	function View(context, options){
 		this.selector = context;
 		this._delegate = null;
-		this._context = $(context);
+		this.options = options || {};
+		this.id = this.options.id;
 		this._template = '';
 		this._data = {};
-		if(template){
-			this._templateFile = template;
+		
+		if($(context).length === 0 && this.options.tag){
+			this._context = this.createElement();
+		}else{
+			this._context = $(context);
+		}
+		
+		if(this.options.template){
+			this._templateFile = this.options.template;
 			this.fetchTemplate(this._templateFile);
 		}
 		Zippy.Event.fire('view:new', {view: this});
+	}
+	
+	View.prototype.createElement = function(){
+		var element = document.createElement(this.options.tag);
+		element.id = this.id;
+		return $(element);
+	}
+	
+	View.prototype.attachTo = function(selector){
+		$(selector).append(this._context);
 	}
 	
 	View.prototype.setData = function(data){
@@ -71,12 +89,12 @@
 		return true;
 	}
 	
-	View.prototype.display = function(template, data){
+	View.prototype.display = function(template, data){		
 		this.on('template:loaded', this.display.bind(this));
-		if(!this.isReady()){
+		if(!template && !this.isReady()){
 			this.select();
 			this.fetchTemplate(this._templateFile);
-			return;
+			return false;
 		}
 		this.stopListening('template:loaded', this.display.bind(this));
 		this.listen();
