@@ -29,16 +29,13 @@
 			},{
 				initialize: function(){
 					this._menu = new Zippy.View('nav', {
-						tag: 'nav'
+						tag: 'nav',
+						template: 'static/templates/nav.mustache'
 					});
 					this._menu.attachTo('body');
-					this._menu.display('<ul><li><a href="#/hello">Hello!</a></li></ul>');
-					Zippy.Event.on('router:change', function(data){
-						this._menu.display('<ul><li><a href="#/hello">Hello!</a></li></ul>');
-					}.bind(this));
+					this._menu.display();
 				},
 				onHello: function(){
-					this._menu.display('<ul><li><a href="#/hello" style="font-weight:bold">Hello!</a></li></ul>');
 				}
 			});
 			
@@ -60,11 +57,6 @@
 			});
 			var router = new Zippy.Router();
 			router.prepare();
-			// app = new Zippy.App({
-			// 	template: 'static/templates/base.mustache',
-			// 	context: '#main',
-			// });
-			// app.listen();
 		});
 		</script>
 	</head>
