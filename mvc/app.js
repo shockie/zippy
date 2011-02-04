@@ -35,49 +35,19 @@
 		this.router.stop();
 	}
 	
-	App.prototype.onChangeLocation = function(data){
-		if(this._routing[data.old]){
-			this._routing[data.old].destruct();
-			this._routing[data.old].clearView();
-		}
-		
-		if(this._routing[data.url]){
-			this._window._body.setDelegate(this._routing[data.url]);
-			this._routing[data.url].setView(this._window.getBodyView());
-			this._routing[data.url].construct();
-		}
-	}
-	
-	App.prototype.setControllers = function(routing){
-		if(routing){
-			for(var location in routing){
-				this._routing[location] = routing[location];
-			}
-		}
-	}
-	
 	App.prototype.listen = function(){
-		Zippy.Event.on('router:change', this.onChangeLocation.bind(this));
 		this.router = new context.Router();
 		this.prepare();
 	}
 	
 	App.prototype.redirect = function(location){
-		window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + location;
+		window.location.hash = '#' + location;
 	}
 	
 	App.prototype.prepare = function(){
 		this.router.prepare();
-		for(var location in this._routing){
-			this._routing[location].prepare(this._window, location);
-		}
 	}
 	
-	App.prototype.addController = function(location, controller){
-		if(!this._routing[location]){
-			this._routing[location] = controller;
-		}
-	}
 	context.App = App;
 	Class.mixin(context.App, context.Mixin.Event);
 })(Zippy);

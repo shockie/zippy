@@ -6,65 +6,70 @@
 		<script type="text/javascript" src="../lib/jade.js"></script>
 		<script type="text/javascript" src="../zippy.js"></script>
 		<script type="text/javascript">
-			Zippy.Template.render = function(template,data){
-				return jade.render(template,{
-					locals: data
-				});
-			}
+			// Zippy.Template.render = function(template,data){
+			// 	return jade.render(template,{
+			// 		locals: data
+			// 	});
+			// }
 		</script>
 		<script type="text/javascript" src="../lang/class.js"></script>
 		<script type="text/javascript" src="../lang/function.js"></script>
 		<script type="text/javascript" src="../mvc/event.js"></script>
 		<script type="text/javascript" src="../mvc/model.js"></script>
 		<script type="text/javascript" src="../mvc/view.js"></script>
-		<script type="text/javascript" src="../mvc/window.js"></script>
 		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/router.js"></script>
-		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
+				
 		$(document).ready(function(){
-			app = new Zippy.App({
-				template: 'static/templates/base.jade',
-				context: '#main',
-				views: [
-					{ 
-						view: new Zippy.View('header', 'static/templates/header.jade'),
-						data: {title : 'Zippy Example'}
-					},
-					{ 
-						view: new Zippy.View('footer', 'static/templates/footer.jade')
-					}
-				]
+			var menu = new Zippy.Controller({
+				'/hello': 'onHello'
+			},{
+				initialize: function(){
+					this._menu = new Zippy.View({
+						tag: 'nav',
+						id: 'nav',
+						template: 'static/templates/nav.mustache'
+					});
+					this._menu.attachTo('body');
+					this._menu.display(null,{
+						menu: [{url:'#/hello', text:'hello'},{url:'#/test', text:'test'}]
+					});
+				},
+				onHello: function(){
+				}
 			});
-			app.setControllers({
-				'/hello': new Zippy.Controller({
-					construct:function(){
-						this._window.setTitle('Hello World!');
-						this.update('<a href="#/test">go to test</a>');
-						$(this._view.getContext()).delegate('a', 'click', function(event){
-							if(this._view.getContext().css('background-color') == 'red'){
-								this._view.getContext().css('background-color', 'blue');
-								this._window.getDefaultView('header').update({
-									title: 'blue header!'
-								});
-							}else{
-								this._view.getContext().css('background-color', 'red');
-								this._window.getDefaultView('header').update({
-									title: 'red header!'
-								});
-							}
-							
-							event.preventDefault();
-						}.bind(this));
-					},
-					destruct: function(container){
-						console.log('goodbye');
-						$(this._view.getContext()).unbind('click');
-						this.update('');
-					}
-				})
+			
+			var content = new Zippy.Controller({
+				'/hello': 'onHello',
+				'/test': 'onTest'
+			},{
+				initialize: function(){
+					this._test = new Zippy.View({
+						tag: 'div',
+						id: 'test',
+						template: 'static/templates/body.mustache'
+					});
+					this._test.attachTo('body');
+					this._test.display(null,{
+						text:'index!'
+					});
+				},
+				onHello: function(){
+					document.title = 'just say hello!';
+					this._test.display(null,{
+						text:'hello!'
+					});
+				},
+				onTest: function(){
+					document.title = 'test!';
+					this._test.display(null,{
+						text:'test!'
+					});
+				}
 			});
-			app.listen();
+			var router = new Zippy.Router();
+			router.prepare();
 		});
 		</script>
 	</head>

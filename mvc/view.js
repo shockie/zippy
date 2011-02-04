@@ -1,15 +1,29 @@
 (function(context){
-	function View(context, template){
-		this.selector = context;
+	function View(options){
 		this._delegate = null;
-		this._context = $(context);
+		this.options = options || {};
 		this._template = '';
 		this._data = {};
-		if(template){
-			this._templateFile = template;
+		
+		if(this.options.tag){
+			this._context = this.createElement();
+		}
+				
+		if(this.options.template){
+			this._templateFile = this.options.template;
 			this.fetchTemplate(this._templateFile);
 		}
 		context.Event.fire('view:new', {view: this});
+	}
+	
+	View.prototype.createElement = function(){
+		var element = document.createElement(this.options.tag);
+		element.id = this.options.id;
+		return $(element);
+	}
+	
+	View.prototype.attachTo = function(selector){
+		$(selector).append(this._context);
 	}
 	
 	View.prototype.setData = function(data){
@@ -71,12 +85,13 @@
 		return true;
 	};
 	
-	View.prototype.display = function(template, data){
+	View.prototype.display = function(template, data){		
 		this.on('template:loaded', this.display.bind(this));
-		if(!this.isReady()){
+		if(!template && !this.isReady()){
 			this.select();
+			this.setData(data);
 			this.fetchTemplate(this._templateFile);
-			return;
+			return false;
 		}
 		this.stopListening('template:loaded', this.display.bind(this));
 		this.listen();
