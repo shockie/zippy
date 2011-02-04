@@ -17,10 +17,8 @@
 		<script type="text/javascript" src="../mvc/event.js"></script>
 		<script type="text/javascript" src="../mvc/model.js"></script>
 		<script type="text/javascript" src="../mvc/view.js"></script>
-		<script type="text/javascript" src="../mvc/window.js"></script>
 		<script type="text/javascript" src="../mvc/controller.js"></script>
 		<script type="text/javascript" src="../mvc/router.js"></script>
-		<script type="text/javascript" src="../mvc/app.js"></script>
 		<script type="text/javascript">
 				
 		$(document).ready(function(){
@@ -28,31 +26,46 @@
 				'/hello': 'onHello'
 			},{
 				initialize: function(){
-					this._menu = new Zippy.View('nav', {
+					this._menu = new Zippy.View({
 						tag: 'nav',
+						id: 'nav',
 						template: 'static/templates/nav.mustache'
 					});
 					this._menu.attachTo('body');
-					this._menu.display();
+					this._menu.display(null,{
+						menu: [{url:'#/hello', text:'hello'},{url:'#/test', text:'test'}]
+					});
 				},
 				onHello: function(){
 				}
 			});
 			
-			var hello = new Zippy.Controller({
-				'/hello': 'onHello'
+			var content = new Zippy.Controller({
+				'/hello': 'onHello',
+				'/test': 'onTest'
 			},{
 				initialize: function(){
-					this._test = new Zippy.View('.test', {
+					this._test = new Zippy.View({
 						tag: 'div',
-						id: 'test'
+						id: 'test',
+						template: 'static/templates/body.mustache'
 					});
 					this._test.attachTo('body');
-					this._test.display('hello!');
+					this._test.display(null,{
+						text:'index!'
+					});
 				},
 				onHello: function(){
 					document.title = 'just say hello!';
-					console.log('just say hello!');
+					this._test.display(null,{
+						text:'hello!'
+					});
+				},
+				onTest: function(){
+					document.title = 'test!';
+					this._test.display(null,{
+						text:'test!'
+					});
 				}
 			});
 			var router = new Zippy.Router();

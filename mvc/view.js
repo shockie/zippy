@@ -1,18 +1,14 @@
 (function(context){
-	function View(context, options){
-		this.selector = context;
+	function View(options){
 		this._delegate = null;
 		this.options = options || {};
-		this.id = this.options.id;
 		this._template = '';
 		this._data = {};
 		
-		if($(context).length === 0 && this.options.tag){
+		if(this.options.tag){
 			this._context = this.createElement();
-		}else{
-			this._context = $(context);
 		}
-		
+				
 		if(this.options.template){
 			this._templateFile = this.options.template;
 			this.fetchTemplate(this._templateFile);
@@ -22,7 +18,7 @@
 	
 	View.prototype.createElement = function(){
 		var element = document.createElement(this.options.tag);
-		element.id = this.id;
+		element.id = this.options.id;
 		return $(element);
 	}
 	
@@ -93,6 +89,7 @@
 		this.on('template:loaded', this.display.bind(this));
 		if(!template && !this.isReady()){
 			this.select();
+			this.setData(data);
 			this.fetchTemplate(this._templateFile);
 			return false;
 		}
