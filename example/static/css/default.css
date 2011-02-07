@@ -1,0 +1,26 @@
+body {
+  font-family: arial, tahoma;
+}
+header {
+  display: block;
+  float: left;
+  margin: 0 30px 0 0;
+  width: 978px;
+  height: 200px;
+}
+nav {
+  display: block;
+  float: left;
+  margin: 0 30px 0 0;
+  width: 138px;
+  clear: left;
+}
+nav ul li {
+  list-style-type: none;
+}
+body > div {
+  display: block;
+  float: left;
+  margin: 0 30px 0 0;
+  width: 810px;
+}

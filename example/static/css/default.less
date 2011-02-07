@@ -1,0 +1,31 @@
+@unit: 54px;
+@gm: 30px;
+.g(@u: 20, @marginRight: @gm, @marginLeft: 0, @marginTop: 0, @marginBottom: 0) {
+	display: block;
+	float: left;
+	margin: @marginTop @marginRight @marginBottom @marginLeft;
+	width: (@u * @unit) + ((@u - 1) * @gm);
+}
+
+body{
+	font-family: arial, tahoma;
+}
+
+header{
+	.g(12);
+	height: 200px;
+}
+
+nav{
+	.g(2);
+	clear:left;
+	ul{
+		li{
+			list-style-type: none;
+		}
+	}
+}
+
+body>div{
+	.g(10);
+}
